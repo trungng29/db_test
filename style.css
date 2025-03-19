@@ -225,8 +225,16 @@ body {
 }
 
 .update-input-container {
-    height: 20vh;
+    height: fit-content;
+    width: fit-content;
+    background-color: #608d69;
 }
+
+.update-input-container h5 {
+    margin: 5px;
+}
+
+
 
 /* Responsive */
 @media (max-width: 768px) {
