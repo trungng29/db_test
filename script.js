@@ -24,10 +24,10 @@ window.onload = function () {
 
 async function fetchData(tableName) {
     let url = "";
-    if (tableName === "Khách hàng") {
-        url = "http://localhost:3333/students/allStudents";
-    } else if (tableName === "Nhân viên") {
+    if (tableName === "Nhân viên") {
         url = "http://localhost:3333/students/allNhanVien";
+    } else if (tableName === "Khách hàng") {
+        url = "http://localhost:3333/students/allStudents";
     } else if (tableName === "Phòng") {
         url = "http://localhost:3333/students/allPhong";
     } else if (tableName === "Hóa đơn") {
@@ -46,7 +46,7 @@ async function fetchData(tableName) {
             tableBody.innerHTML = ""; // Xóa dữ liệu cũ
             let tableHeader = "";
 
-            if (tableName === "Khách hàng") {
+            if (tableName === "Nhân viên" || tableName === "Khách hàng") {
                 tableHeader = `
                     <tr>
                         <th>ID</th>
@@ -55,21 +55,64 @@ async function fetchData(tableName) {
                         <th>Tuổi</th>
                         <th>Giới Tính</th>
                         <th>Số Điện Thoại</th>
-                        <th>Hành động</th>
                     </tr>`;
-
                 data.forEach((item) => {
                     const row = `<tr>
-                        <td>${item.id_khachHang}</td>
-                        <td>${item.hoTen}</td>
-                        <td>${item.cccd}</td>
-                        <td>${item.tuoi}</td>
-                        <td>${item.gioiTinh}</td>
-                        <td>${item.sdt}</td>
+                        <td>${item.id_nhanVien || item.id_khachHang || "N/A"}</td>
+                        <td>${item.hoTen || "N/A"}</td>
+                        <td>${item.cccd || "N/A"}</td>
+                        <td>${item.tuoi !== undefined ? item.tuoi : "Chưa có dữ liệu"}</td>  
+                        <td>${item.gioiTinh || "N/A"}</td>
+                        <td>${item.sdt || "N/A"}</td>
                         <td>
                             <button class="btn-update" onclick="updateStudent('${item.id_khachHang}')"><i class="bi bi-bandaid-fill"></i></button>
                             <button class="btn-delete" onclick="deleteStudent('${item.id_khachHang}')"><i class="bi bi-ban"></i></button>
                         </td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } else if (tableName === "Phòng") {
+                tableHeader = `
+                    <tr>
+                        <th>Số Phòng</th>
+                        <th>Loại Phòng</th>
+                        <th>Giá Phòng</th>
+                    </tr>`;
+                data.forEach((item) => {
+                    const row = `<tr>
+                        <td>${item.so_phong || "N/A"}</td>
+                        <td>${item.loai_phong || "N/A"}</td>
+                        <td>${item.gia_phong || "N/A"}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } else if (tableName === "Hóa đơn") {
+                tableHeader = `
+                    <tr>
+                        <th>Mã Hóa Đơn</th>
+                        <th>Mã Khách hàng</th>
+                        <th>Số phòng</th>
+                        <th>Tổng tiền</th>
+                    </tr>`;
+                data.forEach((item) => {
+                    const row = `<tr>
+                        <td>${item.id_hoaDon || "N/A"}</td>
+                        <td>${item.id_khachHang || "N/A"}</td>
+                        <td>${item.so_phong|| "N/A"}</td>
+                        <td>${item.giaTien || "N/A"}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } else if (tableName === "Phục vụ") {
+                tableHeader = `
+                    <tr>
+                        <th>ID Nhân Viên</th>
+                        <th>ID Khách hàng</th>
+                    </tr>`;
+                data.forEach((item) => {
+                    const row = `<tr>
+                        <td>${item.id_nhanVien || "N/A"}</td>
+                        <td>${item.id_khachHang || "N/A"}</td>
                     </tr>`;
                     tableBody.innerHTML += row;
                 });
