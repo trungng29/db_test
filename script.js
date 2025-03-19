@@ -133,3 +133,84 @@ for (let i = 0; i < sideMenuBtn.length; i++) {
         fetchData(tableName); // Gọi API lấy dữ liệu tương ứng
     });
 }
+
+// ----------------Thanh tìm kiếm----------------------------------
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInputs = document.querySelectorAll(".searchInput");
+    const tableBody = document.getElementById("data-table");
+    const tableHeading = document.querySelector(".table-heading");
+
+    searchInputs.forEach(input => {
+        input.addEventListener("keyup", async function () {
+            const searchTerm = input.value.trim();
+            const tableName = tableHeading.textContent.trim();
+
+            if (searchTerm === "") {
+                fetchData(tableName); // Nếu rỗng, tải lại dữ liệu gốc
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3333/students/search?q=${encodeURIComponent(searchTerm)}&table=${encodeURIComponent(tableName)}`);
+                const data = await response.json();
+
+                tableBody.innerHTML = ""; // Xóa dữ liệu cũ
+                let tableHeader = "";
+
+                if (tableName === "Khách hàng" || tableName === "Nhân viên") {
+                    tableHeader = `<tr>
+                        <th>ID</th><th>Họ Tên</th><th>CCCD</th><th>Tuổi</th><th>Giới Tính</th><th>Số Điện Thoại</th>
+                    </tr>`;
+                    data.forEach((item) => {
+                        const row = `<tr>
+                            <td>${item.id_nhanVien || item.id_khachHang || "N/A"}</td>
+                            <td>${item.hoTen || "N/A"}</td>
+                            <td>${item.cccd || "N/A"}</td>
+                            <td>${item.tuoi !== undefined ? item.tuoi : "N/A"}</td>
+                            <td>${item.gioiTinh || "N/A"}</td>
+                            <td>${item.sdt || "N/A"}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                } else if (tableName === "Phòng") {
+                    tableHeader = `<tr><th>Số Phòng</th><th>Loại Phòng</th><th>Giá Phòng</th></tr>`;
+                    data.forEach((item) => {
+                        const row = `<tr>
+                            <td>${item.so_phong || "N/A"}</td>
+                            <td>${item.loai_phong || "N/A"}</td>
+                            <td>${item.gia_phong || "N/A"}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                } else if (tableName === "Hóa đơn") {
+                    tableHeader = `<tr><th>Mã Hóa Đơn</th><th>Mã Khách hàng</th><th>Số phòng</th><th>Tổng tiền</th></tr>`;
+                    data.forEach((item) => {
+                        const row = `<tr>
+                            <td>${item.id_hoaDon || "N/A"}</td>
+                            <td>${item.id_khachHang || "N/A"}</td>
+                            <td>${item.so_phong || "N/A"}</td>
+                            <td>${item.giaTien || "N/A"}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                } else if (tableName === "Phục vụ") {
+                    tableHeader = `<tr><th>ID Nhân Viên</th><th>ID Khách hàng</th></tr>`;
+                    data.forEach((item) => {
+                        const row = `<tr>
+                            <td>${item.id_nhanVien || "N/A"}</td>
+                            <td>${item.id_khachHang || "N/A"}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                }
+
+                document.querySelector(".table-content thead").innerHTML = tableHeader;
+
+            } catch (error) {
+                console.error("Lỗi tìm kiếm:", error);
+            }
+        });
+    });
+});
+
+

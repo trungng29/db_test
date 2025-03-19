@@ -1,10 +1,10 @@
 const sql = require("mssql");
 
 const config = {
-  server: 'DESKTOP-ARO16L4\\SERVER_MAIN1',
+  server: 'TRUNGNG',
   database: "HotelManagement",
-  user: "admin",
-  password: "aothatday01234)!@#$",
+  user: "trungng_admin",
+  password: "chillvoicahaichaibiaABC!@#123",
   options: {
     trustedConnection: true,
     enableArithAbort: true,
