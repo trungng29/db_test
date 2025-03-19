@@ -24,10 +24,10 @@ window.onload = function () {
 
 async function fetchData(tableName) {
     let url = "";
-    if (tableName === "Nhân viên") {
-        url = "http://localhost:3333/students/allNhanVien";
-    } else if (tableName === "Khách hàng") {
+    if (tableName === "Khách hàng") {
         url = "http://localhost:3333/students/allStudents";
+    } else if (tableName === "Nhân viên") {
+        url = "http://localhost:3333/students/allNhanVien";
     } else if (tableName === "Phòng") {
         url = "http://localhost:3333/students/allPhong";
     } else if (tableName === "Hóa đơn") {
@@ -46,7 +46,7 @@ async function fetchData(tableName) {
             tableBody.innerHTML = ""; // Xóa dữ liệu cũ
             let tableHeader = "";
 
-            if (tableName === "Nhân viên" || tableName === "Khách hàng") {
+            if (tableName === "Khách hàng") {
                 tableHeader = `
                     <tr>
                         <th>ID</th>
@@ -55,60 +55,21 @@ async function fetchData(tableName) {
                         <th>Tuổi</th>
                         <th>Giới Tính</th>
                         <th>Số Điện Thoại</th>
+                        <th>Hành động</th>
                     </tr>`;
+
                 data.forEach((item) => {
                     const row = `<tr>
-                        <td>${item.id_nhanVien || item.id_khachHang || "N/A"}</td>
-                        <td>${item.hoTen || "N/A"}</td>
-                        <td>${item.cccd || "N/A"}</td>
-                        <td>${item.tuoi !== undefined ? item.tuoi : "Chưa có dữ liệu"}</td>  
-                        <td>${item.gioiTinh || "N/A"}</td>
-                        <td>${item.sdt || "N/A"}</td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
-                });
-            } else if (tableName === "Phòng") {
-                tableHeader = `
-                    <tr>
-                        <th>Số Phòng</th>
-                        <th>Loại Phòng</th>
-                        <th>Giá Phòng</th>
-                    </tr>`;
-                data.forEach((item) => {
-                    const row = `<tr>
-                        <td>${item.so_phong || "N/A"}</td>
-                        <td>${item.loai_phong || "N/A"}</td>
-                        <td>${item.gia_phong || "N/A"}</td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
-                });
-            } else if (tableName === "Hóa đơn") {
-                tableHeader = `
-                    <tr>
-                        <th>Mã Hóa Đơn</th>
-                        <th>Mã Khách hàng</th>
-                        <th>Số phòng</th>
-                        <th>Tổng tiền</th>
-                    </tr>`;
-                data.forEach((item) => {
-                    const row = `<tr>
-                        <td>${item.id_hoaDon || "N/A"}</td>
-                        <td>${item.id_khachHang || "N/A"}</td>
-                        <td>${item.so_phong|| "N/A"}</td>
-                        <td>${item.giaTien || "N/A"}</td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
-                });
-            } else if (tableName === "Phục vụ") {
-                tableHeader = `
-                    <tr>
-                        <th>ID Nhân Viên</th>
-                        <th>ID Khách hàng</th>
-                    </tr>`;
-                data.forEach((item) => {
-                    const row = `<tr>
-                        <td>${item.id_nhanVien || "N/A"}</td>
-                        <td>${item.id_khachHang || "N/A"}</td>
+                        <td>${item.id_khachHang}</td>
+                        <td>${item.hoTen}</td>
+                        <td>${item.cccd}</td>
+                        <td>${item.tuoi}</td>
+                        <td>${item.gioiTinh}</td>
+                        <td>${item.sdt}</td>
+                        <td>
+                            <button class="btn-update" onclick="updateStudent('${item.id_khachHang}')"><i class="bi bi-bandaid-fill"></i></button>
+                            <button class="btn-delete" onclick="deleteStudent('${item.id_khachHang}')"><i class="bi bi-ban"></i></button>
+                        </td>
                     </tr>`;
                     tableBody.innerHTML += row;
                 });
@@ -122,6 +83,7 @@ async function fetchData(tableName) {
         }
     }
 }
+
 
 
 
@@ -212,5 +174,112 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+//---------------------Tạo bản ghi mới--------------------
+async function addStudent() {
+    const newStudent = {
+        id_khachHang: document.getElementById("id_khachHang").value,
+        hoTen: document.getElementById("hoTen").value,
+        cccd: document.getElementById("cccd").value,
+        tuoi: document.getElementById("tuoi").value,
+        gioiTinh: document.getElementById("gioiTinh").value,
+        sdt: document.getElementById("sdt").value,
+    };
+
+    const response = await fetch("http://localhost:3333/students/createStudent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newStudent),
+    });
+
+    if (response.ok) {
+        alert("Thêm khách hàng thành công!");
+        fetchData("Khách hàng");
+    } else {
+        alert("Thêm khách hàng thất bại!");
+    }
+}
+
+// ---------------- Xoa -------------------------------
+async function deleteStudent(id) {
+    if (!confirm("Bạn có chắc chắn muốn xóa không?")) return;
+
+    const response = await fetch(`http://localhost:3333/students/deleteStudent/${id}`, {
+        method: "DELETE",
+    });
+
+    if (response.ok) {
+        alert("Xóa thành công!");
+        fetchData("Khách hàng");
+    } else {
+        alert("Xóa thất bại!");
+    }
+}
+
+// -------------------- Update khach hang ---------------------------------
+async function editStudent(id) {
+    try {
+        const response = await fetch(`http://localhost:3333/students/allStudents`);
+        const data = await response.json();
+        const student = data.find(item => item.id_khachHang === id);
+
+        if (!student) {
+            alert("Không tìm thấy khách hàng!");
+            return;
+        }
+
+        document.getElementById("edit_id_khachHang").value = student.id_khachHang;
+        document.getElementById("edit_hoTen").value = student.hoTen;
+        document.getElementById("edit_cccd").value = student.cccd;
+        document.getElementById("edit_tuoi").value = student.tuoi;
+        document.getElementById("edit_gioiTinh").value = student.gioiTinh;
+        document.getElementById("edit_sdt").value = student.sdt;
+        
+        document.getElementById("updateStudentBtn").setAttribute("onclick", `updateStudent('${id}')`);
+
+        const modal = new bootstrap.Modal(document.getElementById("editModal"));
+        modal.show();
+    } catch (error) {
+        console.error("Lỗi khi tải thông tin khách hàng:", error);
+    }
+}
+
+async function updateStudent(id) {
+    const updatedStudent = {
+        hoTen: document.getElementById("edit_hoTen").value,
+        cccd: document.getElementById("edit_cccd").value,
+        tuoi: document.getElementById("edit_tuoi").value,
+        gioiTinh: document.getElementById("edit_gioiTinh").value,
+        sdt: document.getElementById("edit_sdt").value,
+    };
+
+    const response = await fetch(`http://localhost:3333/students/updateStudent/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedStudent),
+    });
+
+    if (response.ok) {
+        alert("Cập nhật thành công!");
+        fetchData("Khách hàng");
+        bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
+    } else {
+        alert("Cập nhật thất bại!");
+    }
+}
+
+
+// -------- Truy van san ---------------
+
+async function preQuery(id) {
+    const response = await fetch(`http://localhost:3333/students/preQueryAge20`);
+    const data = await response.json();
+
+
+    tableBody.innerHTML = ""; 
+}
+
+
+
 
 

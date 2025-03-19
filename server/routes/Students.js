@@ -97,6 +97,94 @@ router.get("/allPhucVu", async (req, res) => {
     }
 });
 
+router.get("/preQueryAge20", async (req, res) => {
+  const query = `SELECT KH.* FROM KhachHang KH
+                WHERE KH.tuoi > 20
+                ORDER BY KH.tuoi ASC`;
+  const values = [];
+  const paramNames = [];
+  const isStoredProcedure = false;
+  try {
+    const result = await executeQuery(
+      query,
+      values,
+      paramNames,
+      isStoredProcedure
+    );
+    res.send(result.recordset);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
+  }
+});
+
+router.post("/createStudent", async (req, res) => {
+  const { id_khachHang, hoTen, cccd, tuoi, gioiTinh, sdt } = req.body;
+  if (!id_khachHang || !hoTen || !cccd || !tuoi || !gioiTinh || !sdt) {
+    return res.status(400).send({ message: "Thiếu dữ liệu!" });
+  }
+
+  const query = `INSERT INTO dbo.KhachHang (id_khachHang, hoTen, cccd, tuoi, gioiTinh, sdt) 
+                 VALUES (@id_khachHang, @hoTen, @cccd, @tuoi, @gioiTinh, @sdt)`;
+  const values = [id_khachHang, hoTen, cccd, tuoi, gioiTinh, sdt];
+  const paramNames = ["id_khachHang", "hoTen", "cccd", "tuoi", "gioiTinh", "sdt"];
+  const isStoredProcedure = false;
+
+  try {
+    await executeQuery(query, values, paramNames, isStoredProcedure);
+    res.status(201).send({ message: "Khách hàng đã được thêm!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
+  }
+});
+
+router.delete("/deleteStudent/:id", async (req, res) => {
+  const { id } = req.params;
+  const query = "DELETE FROM dbo.KhachHang WHERE id_khachHang = @id";
+  const values = [id];
+  const paramNames = ["id"];
+  const isStoredProcedure = false;
+
+  try {
+    await executeQuery(query, values, paramNames, isStoredProcedure);
+    res.status(200).send({ message: "Xóa khách hàng thành công!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
+  }
+});
+
+router.put("/updateStudent/:id", async (req, res) => {
+  const { id } = req.params;
+  const { hoTen, cccd, tuoi, gioiTinh, sdt } = req.body;
+
+  if (!hoTen || !cccd || !tuoi || !gioiTinh || !sdt) {
+    return res.status(400).send({ message: "Thiếu dữ liệu!" });
+  }
+
+  const query = `UPDATE dbo.KhachHang 
+                 SET hoTen = @hoTen, cccd = @cccd, tuoi = @tuoi, gioiTinh = @gioiTinh, sdt = @sdt 
+                 WHERE id_khachHang = @id`;
+  const values = [hoTen, cccd, tuoi, gioiTinh, sdt, id];
+  const paramNames = ["hoTen", "cccd", "tuoi", "gioiTinh", "sdt", "id"];
+  const isStoredProcedure = false;
+
+  try {
+    const result = await executeQuery(query, values, paramNames, isStoredProcedure);
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).send({ message: "Không tìm thấy khách hàng để cập nhật!" });
+    }
+    res.status(200).send({ message: "Cập nhật khách hàng thành công!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
+  }
+});
+
+
+
+
 router.get("/search", async (req, res) => {
   const searchTerm = req.query.q;
   const tableName = req.query.table;

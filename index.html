@@ -55,6 +55,35 @@
                     <div class="search-container mb-3 container">
                         <input type="text" class="searchInput form-control" placeholder="Nhập từ khóa tìm kiếm...">
                     </div>
+                    <!-- Example split danger button -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success">Action</button>
+                        <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"></a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="add-more-container container mt-4 mb-3">
+                    <h3>Thêm Khách Hàng</h3>
+                    <div class="input-field">
+                        <input id="id_khachHang" type="text" placeholder="ID Khách Hàng">
+                        <input id="hoTen" type="text" placeholder="Họ Tên">
+                        <input id="cccd" type="text" placeholder="CCCD">
+                        <input id="tuoi" type="number" placeholder="Tuổi">
+                        <input id="gioiTinh" type="text" placeholder="Giới Tính">
+                        <input id="sdt" type="text" placeholder="Số Điện Thoại">
+                    </div>
+                    <div class="add-submit-button container">
+                        <button onclick="addStudent()" class="btn btn-primary">Thêm</button>
+                    </div>
+
                 </div>
                 <div class="table-content container mt-4">
                     <table class="table table-bordered">
@@ -73,6 +102,32 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Modal Chỉnh sửa Khách Hàng -->
+            <div class="update-input-container container" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Chỉnh sửa khách hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    <input id="edit_id_khachHang" type="text" class="form-control" placeholder="ID Khách Hàng" disabled>
+                    <input id="edit_hoTen" type="text" class="form-control" placeholder="Họ Tên">
+                    <input id="edit_cccd" type="text" class="form-control" placeholder="CCCD">
+                    <input id="edit_tuoi" type="number" class="form-control" placeholder="Tuổi">
+                    <input id="edit_gioiTinh" type="text" class="form-control" placeholder="Giới Tính">
+                    <input id="edit_sdt" type="text" class="form-control" placeholder="Số Điện Thoại">
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button id="updateStudentBtn" class="btn btn-primary">Lưu</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+  
+
         </div>
     
         <script src="./script.js"></script>
