@@ -226,12 +226,10 @@ body {
 
 .update-input-container {
     height: fit-content;
-    width: fit-content;
+    /* width: fit-content; */
     background-color: #608d69;
-}
-
-.update-input-container h5 {
-    margin: 5px;
+    padding: 20px;
+    border-radius: 30px;
 }
 
 
